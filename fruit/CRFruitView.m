@@ -37,7 +37,6 @@
 }
 
 - (void)setInteger:(NSInteger)integer{
-    NSLog(@"%ld", (long)integer);
     dispatch_async(self.fruitQ, ^{
         dispatch_suspend(self.fruitQ);
         NSInteger tmpInt = self.lastInt;
