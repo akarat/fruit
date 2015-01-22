@@ -148,46 +148,40 @@
             
             [l setAlpha:0.0];
             @autoreleasepool {
-                [UIView animateWithDuration:self.charAnimationDuration*array.count
-                                      delay:i*0.2
-                                    options:UIViewAnimationOptionCurveEaseInOut
-                                 animations:^{
-                                     if (self.downRoll) {
-                                         [l setCenter:CGPointMake(l.center.x, l.center.y+array.count*(self.verticalMargin + l.bounds.size.height))];
-                                     } else {
-                                         [l setCenter:CGPointMake(l.center.x, l.center.y-array.count*(self.verticalMargin + l.bounds.size.height))];
-                                     }
-                                     [l setAlpha:1.0];
-                                 } completion:^(BOOL finished) {
-                                     [l removeFromSuperview];
-                                 }];
+                [UIView animateWithDuration:self.charAnimationDuration*array.count delay:i*0.2 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+                    if (self.downRoll) {
+                        [l setCenter:CGPointMake(l.center.x, l.center.y+array.count*(self.verticalMargin + l.bounds.size.height))];
+                    } else {
+                        [l setCenter:CGPointMake(l.center.x, l.center.y-array.count*(self.verticalMargin + l.bounds.size.height))];
+                    }
+                    [l setAlpha:1.0];
+                } completion:^(BOOL finished) {
+                    [l removeFromSuperview];
+                }];
             }
         }];
         
         CGPoint oriCenter = label.center;
         
-        dispatch_suspend(self.fruitQ);
-        [UIView animateWithDuration:self.charAnimationDuration*array.count
-                              delay:i*0.2
-                            options:UIViewAnimationOptionCurveEaseInOut
-                         animations:^{
-                             if (self.downRoll) {
-                                 [label setCenter:CGPointMake(label.center.x,
-                                                              label.center.y+array.count*(self.verticalMargin + label.bounds.size.height))];
-                             } else {
-                                 [label setCenter:CGPointMake(label.center.x,
-                                                              label.center.y-array.count*(self.verticalMargin + label.bounds.size.height))];
-                             }
-                         } completion:^(BOOL finished) {
-                             NSString *str = @"";
-                             if ([array lastObject]) {
-                                 str = [array lastObject];
-                             }
-                             NSAttributedString *attrStr = [[NSAttributedString alloc] initWithString:str attributes:self.textAttr];
-                             [label setAttributedText:attrStr];
-                             [label setCenter:oriCenter];
-                             dispatch_resume(self.fruitQ);
-                         }];
+        [UIView animateWithDuration:self.charAnimationDuration*array.count delay:i*0.2 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+            dispatch_suspend(self.fruitQ);
+            if (self.downRoll) {
+                [label setCenter:CGPointMake(label.center.x,
+                                             label.center.y+array.count*(self.verticalMargin + label.bounds.size.height))];
+            } else {
+                [label setCenter:CGPointMake(label.center.x,
+                                             label.center.y-array.count*(self.verticalMargin + label.bounds.size.height))];
+            }
+        } completion:^(BOOL finished) {
+            dispatch_resume(self.fruitQ);
+            NSString *str = @"";
+            if ([array lastObject]) {
+                str = [array lastObject];
+            }
+            NSAttributedString *attrStr = [[NSAttributedString alloc] initWithString:str attributes:self.textAttr];
+            [label setAttributedText:attrStr];
+            [label setCenter:oriCenter];
+        }];
     }
     dispatch_resume(self.fruitQ);
 }
