@@ -119,6 +119,7 @@
     NSInteger enumLength = currentIsLonger?currentStr.length:lastStr.length;
     
     for (int i = 0; i < (int)enumLength; i ++) {
+        
         NSArray *array = [self.waitingDict objectForKey:@(i)];
         
         if (i >= [self.numArray count]) {
@@ -132,6 +133,7 @@
         if ([array count] == 0) {
             continue;
         }
+        dispatch_suspend(self.fruitQ);
         
         UILabel *label = [self.numArray objectAtIndex:i];
         
@@ -163,8 +165,8 @@
         
         CGPoint oriCenter = label.center;
         
+        
         [UIView animateWithDuration:self.charAnimationDuration*array.count delay:i*0.2 options:UIViewAnimationOptionCurveEaseInOut animations:^{
-            dispatch_suspend(self.fruitQ);
             if (self.downRoll) {
                 [label setCenter:CGPointMake(label.center.x,
                                              label.center.y+array.count*(self.verticalMargin + label.bounds.size.height))];
@@ -173,7 +175,6 @@
                                              label.center.y-array.count*(self.verticalMargin + label.bounds.size.height))];
             }
         } completion:^(BOOL finished) {
-            dispatch_resume(self.fruitQ);
             NSString *str = @"";
             if ([array lastObject]) {
                 str = [array lastObject];
@@ -181,8 +182,10 @@
             NSAttributedString *attrStr = [[NSAttributedString alloc] initWithString:str attributes:self.textAttr];
             [label setAttributedText:attrStr];
             [label setCenter:oriCenter];
+            dispatch_resume(self.fruitQ);
         }];
     }
+    
     dispatch_resume(self.fruitQ);
 }
 
